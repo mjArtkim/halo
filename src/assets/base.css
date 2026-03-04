@@ -1,0 +1,88 @@
+@import 'tailwindcss';
+
+@font-face {
+  font-family: 'HeirofLight';
+  src: url('@/assets/HeirofLightOTFRegular.woff') format('woff');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'HeirofLight';
+  src: url('@/assets/HeirofLightOTFBold.woff') format('woff');
+  font-weight: 700;
+  font-style: bold;
+  font-display: swap;
+}
+@theme {
+  --font-sans: 'HeirofLight', ui-sans-serif, system-ui, sans-serif;
+  --font-brand: 'HeirofLight', ui-sans-serif, system-ui, sans-serif;
+}
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+}
+ul,
+ol {
+  list-style: none;
+}
+::-webkit-scrollbar {
+  width: 10px;
+  height: 8px;
+}
+::-webkit-scrollbar-track {
+  background-color: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background-color: rgba(255, 255, 255, 0.5);
+  border-radius: 4px;
+  border: 2px solid transparent;
+  background-clip: content-box;
+}
+::-webkit-scrollbar-thumb:hover {
+  background-color: rgba(255, 255, 255, 0.8);
+}
+
+:root {
+  --background-dark: #2d3548;
+  --text-light: rgba(255, 255, 255, 0.6);
+  --text-lighter: rgba(255, 255, 255, 0.9);
+}
+
+#app {
+  margin: 0 auto;
+}
+
+a {
+  text-decoration: none;
+  transition: 0.4s;
+  padding: 3px;
+  color: #eee;
+}
+
+/* 작은 모바일 (300px 이하) */
+@media (max-width: 300px) {
+  /* 스타일 정의 */
+}
+
+/* 모바일 (320px 이상) */
+@media (min-width: 320px) {
+  /* 스타일 정의 */
+}
+
+/* 작은 태블릿 (600px 이하) */
+@media (max-width: 600px) {
+  /* 스타일 정의 */
+}
+
+/* 중간 크기 태블릿 (768px 이하) */
+@media (max-width: 768px) {
+  /* 스타일 정의 */
+}
+
+/* 큰 태블릿 (1024px 이하) */
+@media (max-width: 1024px) {
+  /* 스타일 정의 */
+}
