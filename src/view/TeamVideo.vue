@@ -82,8 +82,8 @@ const handleClick = () => {
 
 .ytc {
   width: 100%;
-  height: 100vh;
-  min-height: 100vh;
+  height: 80vh;
+  min-height: 80vh;
   border-radius: 10px;
   display: flex;
   flex-direction: column;
@@ -97,7 +97,7 @@ iframe {
 }
 .ytc .element {
   width: 100%;
-  height: 8%;
+  height: 10%;
   border-radius: 10px;
 }
 .ytc .element.grow {
@@ -105,19 +105,20 @@ iframe {
 }
 .ytc-inbtn {
   position: absolute;
-  top: 0px;
-  right: 30px;
+  top: -90px;
+  right: 0;
   z-index: 10;
 }
 .ytc-move {
-  position: relative;
-  top: -80px;
+  position: absolute;
+  top: 0px;
+  right: 0;
   width: 50px;
   height: 50px;
   border-radius: 50%;
   background-color: rgb(20, 20, 20);
   border: none;
-  font-weight: 600;
+  font-weight: 700;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -140,14 +141,14 @@ iframe {
 @media (max-width: 600px) {
   .ytc-inbtn {
     position: absolute;
-    top: 40px;
-    right: 30px;
+    top: -90px;
+    right: 0px;
   }
 }
 @media (min-width: 601px) and (max-width: 1024px) {
   .ytc-inbtn {
     position: absolute;
-    top: 10px;
+    top: -90px;
     right: 80px;
   }
 }

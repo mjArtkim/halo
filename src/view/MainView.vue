@@ -4,6 +4,7 @@ import gsap from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import IntroView from '@/view/IntroView.vue'
 import TeamVideo from '@/view/TeamVideo.vue'
+import TourPage from '@/view/TourPage.vue'
 
 gsap.registerPlugin(ScrollTrigger)
 
@@ -201,76 +202,107 @@ onBeforeUnmount(() => {
 })
 </script>
 <template>
-  <section ref="root" class="bg-black min-h-screen mx-auto w-full">
-    <section ref="heroSection" class="h-screen relative flex flex-col items-center overflow-hidden">
-      <div class="w-full z-1 gap-30 pt-30 px-8">
-        <div class="py-30"><img src="@/assets/img/logo.png" alt="Logo" /></div>
-        <div class="flex flex-col items-center justify-center gap-30 pt-10 text-[#DDD]">
-          <div class="text-xl">BE PART OF OUR FUTURE</div>
-          <div class="text-xl">HALŌ</div>
-        </div>
-      </div>
-      <div ref="heroImage" class="absolute bottom-0 h-[680px] w-full will-change-transform">
-        <img src="@/assets/img/main.png" alt="Main Image" class="w-full h-full object-cover" />
-        <div class="absolute inset-0 bg-gradient-to-t from-transparent to-black/90"></div>
-      </div>
-    </section>
-    <section class="h-screen flex flex-col justify-center">
-      <ul class="flex flex-col gap-10">
-        <li
-          class="cursor-container w-full cursor-pointer border-y border-[#ddd] py-8 text-center text-white pc:hover:bg-white pc:hover:text-[#333] active:bg-white active:text-[#333]"
-        >
-          <img
-            class="swipeimage pointer-events-none invisible fixed left-0 top-0 z-[9] h-[335px] w-[280px] -translate-x-1/2 -translate-y-1/2 object-cover opacity-0"
-            src="@/assets/img/db.png"
-            alt="DUBVISION"
-          />
-          <div class="text text-2xl font-bold">
-            <h1>DUBVISION</h1>
-          </div>
-        </li>
-        <li
-          class="cursor-container w-full cursor-pointer border-y border-[#ddd] py-8 text-center text-white pc:hover:bg-white pc:hover:text-[#333] active:bg-white active:text-[#333]"
-        >
-          <img
-            class="swipeimage pointer-events-none invisible fixed left-0 top-0 z-[9] h-[335px] w-[280px] -translate-x-1/2 -translate-y-1/2 object-cover opacity-0"
-            src="@/assets/img/ms.png"
-            alt="MATISSE & SADKO"
-          />
-          <div class="text text-2xl font-bold">
-            <h1>MATISSE & SADKO</h1>
-          </div>
-        </li>
-        <li
-          class="cursor-container w-full cursor-pointer border-y border-[#ddd] py-8 text-center text-white pc:hover:bg-white pc:hover:text-[#333] active:bg-white active:text-[#333]"
-        >
-          <img
-            class="swipeimage pointer-events-none invisible fixed left-0 top-0 z-[9] h-[335px] w-[280px] -translate-x-1/2 -translate-y-1/2 object-cover opacity-0"
-            src="@/assets/img/tp.png"
-            alt="THIRD PARTY"
-          />
-          <div class="text text-2xl font-bold">
-            <h1>THIRD PARTY</h1>
-          </div>
-        </li>
-      </ul>
-    </section>
+  <section ref="root" class="min-h-screen mx-auto w-full">
     <section>
-      <IntroView></IntroView>
+      <section
+        ref="heroSection"
+        class="h-screen relative flex flex-col items-center overflow-hidden"
+      >
+        <div class="w-full z-1 gap-30 pt-30 px-8 pc:flex pc:flex-col pc:items-center pc:pt-20">
+          <div class="py-30 pc:py-4">
+            <img src="@/assets/img/logo.png" alt="Logo" class="pc:h-[150px]" />
+          </div>
+          <div class="flex flex-col items-center justify-center gap-30 pt-10 text-[#DDD] pc:pt-20">
+            <div class="text-xl">BE PART OF OUR FUTURE</div>
+            <div class="text-xl">HALŌ</div>
+          </div>
+        </div>
+        <div ref="heroImage" class="absolute bottom-0 h-[680px] w-full will-change-transform">
+          <img
+            src="@/assets/img/main.png"
+            alt="Main Image"
+            class="w-full h-full object-cover pc:hidden"
+          />
+          <img
+            src="@/assets/img/mains.png"
+            alt="Main Image"
+            class="w-full h-full object-contain hidden pc:block"
+          />
+          <div class="absolute inset-0 bg-gradient-to-t from-transparent to-black"></div>
+        </div>
+      </section>
+      <section class="h-screen flex flex-col justify-center">
+        <ul class="flex flex-col gap-10">
+          <li
+            class="cursor-container w-full cursor-pointer border-y border-[#ddd] py-8 text-center text-white pc:hover:bg-white pc:hover:text-[#333] active:bg-white active:text-[#333]"
+          >
+            <img
+              class="swipeimage pointer-events-none invisible fixed left-0 top-0 z-[9] h-[335px] w-[280px] -translate-x-1/2 -translate-y-1/2 object-cover opacity-0"
+              src="@/assets/img/db.png"
+              alt="DUBVISION"
+            />
+            <div class="text text-2xl font-bold">
+              <h1>DUBVISION</h1>
+            </div>
+          </li>
+          <li
+            class="cursor-container w-full cursor-pointer border-y border-[#ddd] py-8 text-center text-white pc:hover:bg-white pc:hover:text-[#333] active:bg-white active:text-[#333]"
+          >
+            <img
+              class="swipeimage pointer-events-none invisible fixed left-0 top-0 z-[9] h-[335px] w-[280px] -translate-x-1/2 -translate-y-1/2 object-cover opacity-0"
+              src="@/assets/img/ms.png"
+              alt="MATISSE & SADKO"
+            />
+            <div class="text text-2xl font-bold">
+              <h1>MATISSE & SADKO</h1>
+            </div>
+          </li>
+          <li
+            class="cursor-container w-full cursor-pointer border-y border-[#ddd] py-8 text-center text-white pc:hover:bg-white pc:hover:text-[#333] active:bg-white active:text-[#333]"
+          >
+            <img
+              class="swipeimage pointer-events-none invisible fixed left-0 top-0 z-[9] h-[335px] w-[280px] -translate-x-1/2 -translate-y-1/2 object-cover opacity-0"
+              src="@/assets/img/tp.png"
+              alt="THIRD PARTY"
+            />
+            <div class="text text-2xl font-bold">
+              <h1>THIRD PARTY</h1>
+            </div>
+          </li>
+        </ul>
+      </section>
+      <section>
+        <IntroView></IntroView>
+      </section>
     </section>
     <section
-      class="video-panel relative w-full min-h-[870px] h-full my-[80px] px-10 flex flex-col justify-center items-center"
+      class="video-panel relative w-full min-h-[870px] h-screen my-[80px] px-10 flex flex-col justify-center items-center bgim"
     >
-      <div class="section-inner w-full flex flex-col items-center">
-        <h2 class="text-4xl py-10 font-bold text-white">HALŌ VIDEO</h2>
+      <div class="section-inner w-full flex flex-col items-center justify-center h-full">
+        <h2 class="text-4xl py-10 font-bold text-white pc:text-6xl">HALŌ VIDEO</h2>
       </div>
     </section>
     <section
-      class="video-panel relative w-full min-h-[870px] h-full my-[80px] px-10 flex flex-col justify-center items-center bg-gradient-to-t to-transparent from-white/90"
+      class="video-panel relative w-full min-h-[870px] h-screen my-[80px] px-10 flex flex-col justify-center items-center"
     >
       <div class="section-inner w-full flex flex-col items-center">
         <TeamVideo class="grid"></TeamVideo>
       </div>
     </section>
+    <section
+      class="video-panel relative w-full min-h-[880px] h-full my-[30px] px-10 flex flex-col justify-center items-center bg-black pc:py-20"
+    >
+      <div class="section-inner w-full flex flex-col items-center justify-center py-20">
+        <h2 class="text-4xl py-10 font-bold text-white pc:text-6xl">HALŌ TOUR</h2>
+      </div>
+      <TourPage></TourPage>
+    </section>
   </section>
 </template>
+<style>
+.bgim {
+  background-image: url('@/src/assets/img/09.webp');
+  background-size: cover;
+  background-position: center;
+}
+</style>
