@@ -20,7 +20,6 @@ const analytics =
     : null
 const db = initializeFirestore(app, {
   experimentalAutoDetectLongPolling: true,
-  useFetchStreams: false,
 })
 const auth = getAuth(app)
 const provider = new GoogleAuthProvider()
