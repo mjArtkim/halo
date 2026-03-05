@@ -1,6 +1,6 @@
 import { initializeApp } from 'firebase/app'
 import { getAnalytics } from 'firebase/analytics'
-import { getFirestore } from 'firebase/firestore'
+import { initializeFirestore } from 'firebase/firestore'
 import { getAuth, GoogleAuthProvider, signInWithPopup, signOut } from 'firebase/auth'
 
 const firebaseConfig = {
@@ -18,7 +18,10 @@ const analytics =
   typeof window !== 'undefined' && firebaseConfig.projectId && firebaseConfig.measurementId
     ? getAnalytics(app)
     : null
-const db = getFirestore(app)
+const db = initializeFirestore(app, {
+  experimentalAutoDetectLongPolling: true,
+  useFetchStreams: false,
+})
 const auth = getAuth(app)
 const provider = new GoogleAuthProvider()
 
