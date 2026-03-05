@@ -54,6 +54,7 @@ const handleClick = () => {
         <iframe
           :src="`https://www.youtube.com/embed/${videoId}`"
           title="YouTube video player"
+          loading="lazy"
           frameborder="0"
           allow="
             accelerometer;

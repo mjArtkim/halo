@@ -18,24 +18,48 @@ let hoverEnabled = false
 let updateHover: (() => void) | null = null
 let panelCleanups: Array<() => void> = []
 let resizeHandler: (() => void) | null = null
+let heroTween: gsap.core.Tween | null = null
 
 onMounted(() => {
   if (!root.value || !heroImage.value || !heroSection.value) return
 
   ctx = gsap.context(() => {
-    gsap.set(heroImage.value, { y: 0, opacity: 1 })
-    gsap.to(heroImage.value, {
-      y: -220,
-      opacity: 0,
-      ease: 'none',
-      scrollTrigger: {
-        trigger: heroSection.value,
-        start: 'top top',
-        end: 'bottom top',
-        scrub: true,
-        invalidateOnRefresh: true,
-      },
-    })
+    ScrollTrigger.config({ ignoreMobileResize: true, limitCallbacks: true })
+
+    const getMotionSettings = () => {
+      const isMobile = window.innerWidth < 768
+      return {
+        isMobile,
+        heroY: isMobile ? -160 : -220,
+        heroScrub: isMobile ? 0.6 : 0.3,
+        panelScale: isMobile ? 0.85 : 0.7,
+        panelOpacity: isMobile ? 0.7 : 0.5,
+        panelScrub: isMobile ? 0.7 : 0.3,
+        fadeDuration: isMobile ? 0.2 : 0.1,
+        pinAnticipate: isMobile ? 1 : 0,
+      }
+    }
+
+    const setupHero = () => {
+      const motion = getMotionSettings()
+      heroTween?.scrollTrigger?.kill()
+      heroTween?.kill()
+      gsap.set(heroImage.value, { y: 0, opacity: 1 })
+      heroTween = gsap.to(heroImage.value, {
+        y: motion.heroY,
+        opacity: 0,
+        ease: 'none',
+        scrollTrigger: {
+          trigger: heroSection.value,
+          start: 'top top',
+          end: 'bottom top',
+          scrub: motion.heroScrub,
+          invalidateOnRefresh: true,
+        },
+      })
+    }
+
+    setupHero()
 
     const enableHover = () => {
       if (!root.value || hoverEnabled) return
@@ -126,6 +150,7 @@ onMounted(() => {
 
       const panels = gsap.utils.toArray<HTMLElement>('.video-panel', root.value)
       panels.forEach((panel) => {
+        const motion = getMotionSettings()
         const innerpanel = panel.querySelector<HTMLElement>('.section-inner')
         if (!innerpanel) return
 
@@ -147,7 +172,8 @@ onMounted(() => {
             end: () => (fakeScrollRatio ? `+=${innerpanel.offsetHeight}` : 'bottom top'),
             pinSpacing: false,
             pin: true,
-            scrub: true,
+            scrub: motion.panelScrub,
+            anticipatePin: motion.pinAnticipate,
             invalidateOnRefresh: true,
           },
         })
@@ -161,10 +187,11 @@ onMounted(() => {
           })
         }
 
-        tl.fromTo(panel, { scale: 1, opacity: 1 }, { scale: 0.7, opacity: 0.5, duration: 0.9 }).to(
+        tl.fromTo(
           panel,
-          { opacity: 0, duration: 0.1 },
-        )
+          { scale: 1, opacity: 1 },
+          { scale: motion.panelScale, opacity: motion.panelOpacity, duration: 0.9 },
+        ).to(panel, { opacity: 0, duration: motion.fadeDuration })
 
         panelCleanups.push(() => {
           tl.scrollTrigger?.kill()
@@ -176,7 +203,17 @@ onMounted(() => {
     }
 
     setupPanels()
+    let lastWidth = window.innerWidth
+    let lastHeight = window.innerHeight
     resizeHandler = () => {
+      const width = window.innerWidth
+      const height = window.innerHeight
+      const widthChanged = Math.abs(width - lastWidth) > 0
+      const heightChanged = Math.abs(height - lastHeight) > 120
+      if (!widthChanged && !heightChanged) return
+      lastWidth = width
+      lastHeight = height
+      setupHero()
       setupPanels()
       ScrollTrigger.refresh()
     }
@@ -198,6 +235,8 @@ onBeforeUnmount(() => {
     hoverCleanups = []
     hoverEnabled = false
   }
+  heroTween?.scrollTrigger?.kill()
+  heroTween?.kill()
   ctx?.revert()
 })
 </script>
@@ -290,7 +329,7 @@ onBeforeUnmount(() => {
       </div>
     </section>
     <section
-      class="video-panel relative w-full min-h-[880px] h-full my-[30px] px-10 flex flex-col justify-center items-center bg-black pc:py-20"
+      class="video-panel relative w-full min-h-[880px] h-full my-[30px] px-10 flex flex-col justify-center items-center bgim2 pc:py-20"
     >
       <div class="section-inner w-full flex flex-col items-center justify-center py-20">
         <h2 class="text-4xl py-10 font-bold text-white pc:text-6xl">HALŌ TOUR</h2>
@@ -302,6 +341,11 @@ onBeforeUnmount(() => {
 <style>
 .bgim {
   background-image: url('@/src/assets/img/09.webp');
+  background-size: cover;
+  background-position: center;
+}
+.bgim2 {
+  background-image: url('@/src/assets/img/11.webp');
   background-size: cover;
   background-position: center;
 }

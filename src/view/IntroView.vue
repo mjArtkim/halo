@@ -21,22 +21,27 @@ const createTween = () => {
   galleryElement.classList.remove('gallery--final')
 
   flipCtx = gsap.context(() => {
+    const isMobile = window.innerWidth < 768
     galleryElement.classList.add('gallery--final')
     const flipState = Flip.getState(galleryItems)
     galleryElement.classList.remove('gallery--final')
 
     const flip = Flip.to(flipState, {
       simple: true,
-      ease: 'expoScale(1, 5)',
+      ease: isMobile ? 'power1.out' : 'expoScale(1, 5)',
+      duration: isMobile ? 0.8 : 1,
     })
 
     const tl = gsap.timeline({
       scrollTrigger: {
         trigger: galleryElement,
         start: 'center center',
-        end: '+=100%',
-        scrub: true,
+        end: isMobile ? '+=80%' : '+=100%',
+        scrub: isMobile ? 0.6 : true,
         pin: galleryElement.parentNode as Element,
+        anticipatePin: isMobile ? 1 : 0,
+        fastScrollEnd: true,
+        invalidateOnRefresh: true,
       },
     })
 
