@@ -17,6 +17,7 @@
 @theme {
   --font-sans: 'HeirofLight', ui-sans-serif, system-ui, sans-serif;
   --font-brand: 'HeirofLight', ui-sans-serif, system-ui, sans-serif;
+  --breakpoint-pc: 1200px;
 }
 *,
 *::before,
@@ -52,6 +53,7 @@ ol {
 }
 
 #app {
+  width: 100%;
   margin: 0 auto;
 }
 

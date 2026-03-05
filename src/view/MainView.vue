@@ -2,6 +2,8 @@
 import { onBeforeUnmount, onMounted, ref } from 'vue'
 import gsap from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
+import IntroView from '@/view/IntroView.vue'
+import TeamVideo from '@/view/TeamVideo.vue'
 
 gsap.registerPlugin(ScrollTrigger)
 
@@ -9,7 +11,12 @@ const root = ref<HTMLElement | null>(null)
 const heroSection = ref<HTMLElement | null>(null)
 const heroImage = ref<HTMLDivElement | null>(null)
 let ctx: gsap.Context | null = null
+let mediaQuery: MediaQueryList | null = null
 let hoverCleanups: Array<() => void> = []
+let hoverEnabled = false
+let updateHover: (() => void) | null = null
+let panelCleanups: Array<() => void> = []
+let resizeHandler: (() => void) | null = null
 
 onMounted(() => {
   if (!root.value || !heroImage.value || !heroSection.value) return
@@ -29,73 +36,172 @@ onMounted(() => {
       },
     })
 
-    const images = root.value?.querySelectorAll('img.swipeimage')
-    if (images) {
-      gsap.set(images, { yPercent: -50, xPercent: -50, autoAlpha: 0 })
+    const enableHover = () => {
+      if (!root.value || hoverEnabled) return
+      hoverEnabled = true
+
+      const images = root.value?.querySelectorAll('img.swipeimage')
+      if (images) {
+        gsap.set(images, { yPercent: -50, xPercent: -50, autoAlpha: 0 })
+      }
+
+      hoverCleanups = []
+      const containers = gsap.utils.toArray<HTMLElement>('.cursor-container', root.value)
+
+      containers.forEach((el) => {
+        const image = el.querySelector<HTMLImageElement>('img.swipeimage')
+        if (!image) return
+
+        const setX = gsap.quickTo(image, 'x', { duration: 0.4, ease: 'power3' })
+        const setY = gsap.quickTo(image, 'y', { duration: 0.4, ease: 'power3' })
+        let firstEnter = true
+
+        const align = (e: MouseEvent) => {
+          if (firstEnter) {
+            setX(e.clientX, e.clientX)
+            setY(e.clientY, e.clientY)
+            firstEnter = false
+          } else {
+            setX(e.clientX)
+            setY(e.clientY)
+          }
+        }
+
+        const startFollow = () => document.addEventListener('mousemove', align)
+        const stopFollow = () => document.removeEventListener('mousemove', align)
+
+        const fade = gsap.to(image, {
+          autoAlpha: 1,
+          ease: 'none',
+          paused: true,
+          duration: 0.1,
+          onReverseComplete: stopFollow,
+        })
+
+        const onEnter = (e: MouseEvent) => {
+          firstEnter = true
+          fade.play()
+          startFollow()
+          align(e)
+        }
+
+        const onLeave = () => fade.reverse()
+
+        el.addEventListener('mouseenter', onEnter)
+        el.addEventListener('mouseleave', onLeave)
+
+        hoverCleanups.push(() => {
+          el.removeEventListener('mouseenter', onEnter)
+          el.removeEventListener('mouseleave', onLeave)
+          stopFollow()
+          gsap.set(image, { autoAlpha: 0 })
+        })
+      })
     }
 
-    hoverCleanups = []
-    const containers = gsap.utils.toArray<HTMLElement>('.cursor-container', root.value)
+    const disableHover = () => {
+      if (!hoverEnabled) return
+      hoverEnabled = false
+      hoverCleanups.forEach((cleanup) => cleanup())
+      hoverCleanups = []
+    }
 
-    containers.forEach((el) => {
-      const image = el.querySelector<HTMLImageElement>('img.swipeimage')
-      if (!image) return
+    updateHover = () => {
+      if (!mediaQuery) return
+      if (mediaQuery.matches) {
+        enableHover()
+      } else {
+        disableHover()
+      }
+    }
 
-      const setX = gsap.quickTo(image, 'x', { duration: 0.4, ease: 'power3' })
-      const setY = gsap.quickTo(image, 'y', { duration: 0.4, ease: 'power3' })
-      let firstEnter = true
+    mediaQuery = window.matchMedia('(min-width: 1200px)')
+    updateHover()
+    mediaQuery.addEventListener('change', updateHover)
 
-      const align = (e: MouseEvent) => {
-        if (firstEnter) {
-          setX(e.clientX, e.clientX)
-          setY(e.clientY, e.clientY)
-          firstEnter = false
+    const setupPanels = () => {
+      panelCleanups.forEach((cleanup) => cleanup())
+      panelCleanups = []
+
+      const panels = gsap.utils.toArray<HTMLElement>('.video-panel', root.value)
+      panels.forEach((panel) => {
+        const innerpanel = panel.querySelector<HTMLElement>('.section-inner')
+        if (!innerpanel) return
+
+        const panelHeight = innerpanel.offsetHeight
+        const windowHeight = window.innerHeight
+        const difference = panelHeight - windowHeight
+        const fakeScrollRatio = difference > 0 ? difference / (difference + windowHeight) : 0
+
+        if (fakeScrollRatio) {
+          gsap.set(panel, { marginBottom: panelHeight * fakeScrollRatio })
         } else {
-          setX(e.clientX)
-          setY(e.clientY)
+          gsap.set(panel, { clearProps: 'marginBottom' })
         }
-      }
 
-      const startFollow = () => document.addEventListener('mousemove', align)
-      const stopFollow = () => document.removeEventListener('mousemove', align)
+        const tl = gsap.timeline({
+          scrollTrigger: {
+            trigger: panel,
+            start: 'bottom bottom',
+            end: () => (fakeScrollRatio ? `+=${innerpanel.offsetHeight}` : 'bottom top'),
+            pinSpacing: false,
+            pin: true,
+            scrub: true,
+            invalidateOnRefresh: true,
+          },
+        })
 
-      const fade = gsap.to(image, {
-        autoAlpha: 1,
-        ease: 'none',
-        paused: true,
-        duration: 0.1,
-        onReverseComplete: stopFollow,
+        if (fakeScrollRatio) {
+          tl.to(innerpanel, {
+            yPercent: -100,
+            y: window.innerHeight,
+            duration: 1 / (1 - fakeScrollRatio) - 1,
+            ease: 'none',
+          })
+        }
+
+        tl.fromTo(panel, { scale: 1, opacity: 1 }, { scale: 0.7, opacity: 0.5, duration: 0.9 }).to(
+          panel,
+          { opacity: 0, duration: 0.1 },
+        )
+
+        panelCleanups.push(() => {
+          tl.scrollTrigger?.kill()
+          tl.kill()
+          gsap.set(panel, { clearProps: 'marginBottom,transform,opacity' })
+          gsap.set(innerpanel, { clearProps: 'transform' })
+        })
       })
+    }
 
-      const onEnter = (e: MouseEvent) => {
-        firstEnter = true
-        fade.play()
-        startFollow()
-        align(e)
-      }
-
-      const onLeave = () => fade.reverse()
-
-      el.addEventListener('mouseenter', onEnter)
-      el.addEventListener('mouseleave', onLeave)
-
-      hoverCleanups.push(() => {
-        el.removeEventListener('mouseenter', onEnter)
-        el.removeEventListener('mouseleave', onLeave)
-        stopFollow()
-      })
-    })
+    setupPanels()
+    resizeHandler = () => {
+      setupPanels()
+      ScrollTrigger.refresh()
+    }
+    window.addEventListener('resize', resizeHandler)
   }, root.value)
 })
 
 onBeforeUnmount(() => {
-  hoverCleanups.forEach((cleanup) => cleanup())
-  hoverCleanups = []
+  if (resizeHandler) {
+    window.removeEventListener('resize', resizeHandler)
+  }
+  panelCleanups.forEach((cleanup) => cleanup())
+  panelCleanups = []
+  if (mediaQuery && updateHover) {
+    mediaQuery.removeEventListener('change', updateHover)
+  }
+  if (hoverEnabled) {
+    hoverCleanups.forEach((cleanup) => cleanup())
+    hoverCleanups = []
+    hoverEnabled = false
+  }
   ctx?.revert()
 })
 </script>
 <template>
-  <section ref="root" class="bg-black">
+  <section ref="root" class="bg-black min-h-screen mx-auto w-full">
     <section ref="heroSection" class="h-screen relative flex flex-col items-center overflow-hidden">
       <div class="w-full z-1 gap-30 pt-30 px-8">
         <div class="py-30"><img src="@/assets/img/logo.png" alt="Logo" /></div>
@@ -112,7 +218,7 @@ onBeforeUnmount(() => {
     <section class="h-screen flex flex-col justify-center">
       <ul class="flex flex-col gap-10">
         <li
-          class="cursor-container w-full cursor-pointer border-y border-[#ddd] py-8 text-center text-white hover:bg-white hover:text-[#333]"
+          class="cursor-container w-full cursor-pointer border-y border-[#ddd] py-8 text-center text-white pc:hover:bg-white pc:hover:text-[#333] active:bg-white active:text-[#333]"
         >
           <img
             class="swipeimage pointer-events-none invisible fixed left-0 top-0 z-[9] h-[335px] w-[280px] -translate-x-1/2 -translate-y-1/2 object-cover opacity-0"
@@ -124,7 +230,7 @@ onBeforeUnmount(() => {
           </div>
         </li>
         <li
-          class="cursor-container w-full cursor-pointer border-y border-[#ddd] py-8 text-center text-white hover:bg-white hover:text-[#333]"
+          class="cursor-container w-full cursor-pointer border-y border-[#ddd] py-8 text-center text-white pc:hover:bg-white pc:hover:text-[#333] active:bg-white active:text-[#333]"
         >
           <img
             class="swipeimage pointer-events-none invisible fixed left-0 top-0 z-[9] h-[335px] w-[280px] -translate-x-1/2 -translate-y-1/2 object-cover opacity-0"
@@ -136,7 +242,7 @@ onBeforeUnmount(() => {
           </div>
         </li>
         <li
-          class="cursor-container w-full cursor-pointer border-y border-[#ddd] py-8 text-center text-white hover:bg-white hover:text-[#333]"
+          class="cursor-container w-full cursor-pointer border-y border-[#ddd] py-8 text-center text-white pc:hover:bg-white pc:hover:text-[#333] active:bg-white active:text-[#333]"
         >
           <img
             class="swipeimage pointer-events-none invisible fixed left-0 top-0 z-[9] h-[335px] w-[280px] -translate-x-1/2 -translate-y-1/2 object-cover opacity-0"
@@ -149,6 +255,22 @@ onBeforeUnmount(() => {
         </li>
       </ul>
     </section>
+    <section>
+      <IntroView></IntroView>
+    </section>
+    <section
+      class="video-panel relative w-full min-h-[870px] h-full my-[80px] px-10 flex flex-col justify-center items-center"
+    >
+      <div class="section-inner w-full flex flex-col items-center">
+        <h2 class="text-4xl py-10 font-bold text-white">HALŌ VIDEO</h2>
+      </div>
+    </section>
+    <section
+      class="video-panel relative w-full min-h-[870px] h-full my-[80px] px-10 flex flex-col justify-center items-center bg-gradient-to-t to-transparent from-white/90"
+    >
+      <div class="section-inner w-full flex flex-col items-center">
+        <TeamVideo class="grid"></TeamVideo>
+      </div>
+    </section>
   </section>
 </template>
-<style></style>
