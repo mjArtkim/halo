@@ -47,8 +47,24 @@ const createTween = () => {
 
 onMounted(() => {
   createTween()
-  resizeHandler = () => createTween()
+  const isSafari =
+    typeof navigator !== 'undefined' && /safari/i.test(navigator.userAgent) && !/chrome/i.test(navigator.userAgent)
+  let lastWidth = window.innerWidth
+  let lastHeight = window.innerHeight
+  resizeHandler = () => {
+    const width = window.innerWidth
+    const height = window.innerHeight
+    const widthChanged = width !== lastWidth
+    const heightChanged = Math.abs(height - lastHeight) > 120
+    if (!widthChanged && !heightChanged) return
+    lastWidth = width
+    lastHeight = height
+    createTween()
+  }
   window.addEventListener('resize', resizeHandler)
+  if (isSafari) {
+    ScrollTrigger.config({ ignoreMobileResize: true })
+  }
 })
 
 onBeforeUnmount(() => {

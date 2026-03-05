@@ -21,6 +21,8 @@ let resizeHandler: (() => void) | null = null
 
 onMounted(() => {
   if (!root.value || !heroImage.value || !heroSection.value) return
+  const isSafari =
+    typeof navigator !== 'undefined' && /safari/i.test(navigator.userAgent) && !/chrome/i.test(navigator.userAgent)
 
   const setupHero = () => {
     if (!root.value || !heroImage.value || !heroSection.value) return
@@ -176,12 +178,25 @@ onMounted(() => {
   }
 
   setupPanels()
+  let lastWidth = window.innerWidth
+  let lastHeight = window.innerHeight
   resizeHandler = () => {
+    const width = window.innerWidth
+    const height = window.innerHeight
+    const widthChanged = width !== lastWidth
+    const heightChanged = Math.abs(height - lastHeight) > 120
+    if (!widthChanged && !heightChanged) return
+    lastWidth = width
+    lastHeight = height
     setupHero()
     setupPanels()
     ScrollTrigger.refresh()
   }
   window.addEventListener('resize', resizeHandler)
+
+  if (isSafari) {
+    ScrollTrigger.config({ ignoreMobileResize: true })
+  }
 })
 
 onBeforeUnmount(() => {
