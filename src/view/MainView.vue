@@ -317,7 +317,7 @@ onBeforeUnmount(() => {
       <div class="section-inner w-full flex flex-col items-center text-white">COMMING SOON</div>
     </section>
     <section
-      class="video-panel relative w-full min-h-[880px] h-full my-[30px] px-10 flex flex-col justify-center items-center bgim2 pc:py-20"
+      class="video-panel relative w-full min-h-[880px] h-screen px-10 flex flex-col justify-center items-center bgim2 pc:py-20"
     >
       <div class="section-inner w-full flex flex-col items-center justify-center py-20">
         <h2 class="text-4xl py-10 font-bold text-white pc:text-6xl">HALŌ TOUR</h2>

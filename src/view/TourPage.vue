@@ -283,9 +283,6 @@ onBeforeUnmount(() => {
               <div class="flex gap-4 sm:flex-row items-center justify-between">
                 <div class="space-y-1">
                   <div class="text-lg font-semibold">{{ tour.title }}</div>
-                  <div v-if="tour.setLabel" class="text-sm text-white/70">{{ tour.setLabel }}</div>
-                  <div class="text-sm text-white/70">{{ tour.dateDisplay }}</div>
-                  <div class="text-sm">{{ formatLocation(tour) || 'TBA' }}</div>
                 </div>
                 <button
                   type="button"
@@ -332,7 +329,7 @@ onBeforeUnmount(() => {
           </div>
           <div class="flex justify-between border-b border-white/10 pb-2">
             <span class="text-white/60">Location</span>
-            <span>{{ formatLocation(activeTour) || 'TBA' }}</span>
+            <span>{{ activeTour.city || 'TBA' }}</span>
           </div>
           <div class="flex justify-between border-b border-white/10 pb-2">
             <span class="text-white/60">Country</span>
