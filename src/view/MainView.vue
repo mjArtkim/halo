@@ -11,24 +11,23 @@ gsap.registerPlugin(ScrollTrigger)
 const root = ref<HTMLElement | null>(null)
 const heroSection = ref<HTMLElement | null>(null)
 const heroImage = ref<HTMLDivElement | null>(null)
-let ctx: gsap.Context | null = null
+let heroCtx: gsap.Context | null = null
+let panelCtx: gsap.Context | null = null
 let mediaQuery: MediaQueryList | null = null
 let hoverCleanups: Array<() => void> = []
 let hoverEnabled = false
 let updateHover: (() => void) | null = null
-let panelCleanups: Array<() => void> = []
 let resizeHandler: (() => void) | null = null
-let heroTween: gsap.core.Tween | null = null
 
 onMounted(() => {
   if (!root.value || !heroImage.value || !heroSection.value) return
 
-  ctx = gsap.context(() => {
-    const setupHero = () => {
-      heroTween?.scrollTrigger?.kill()
-      heroTween?.kill()
+  const setupHero = () => {
+    if (!root.value || !heroImage.value || !heroSection.value) return
+    heroCtx?.revert()
+    heroCtx = gsap.context(() => {
       gsap.set(heroImage.value, { y: 0, opacity: 1 })
-      heroTween = gsap.to(heroImage.value, {
+      gsap.to(heroImage.value, {
         y: -220,
         opacity: 0,
         ease: 'none',
@@ -39,97 +38,98 @@ onMounted(() => {
           scrub: true,
         },
       })
+    }, root.value)
+  }
+
+  setupHero()
+
+  const enableHover = () => {
+    if (!root.value || hoverEnabled) return
+    hoverEnabled = true
+
+    const images = root.value?.querySelectorAll('img.swipeimage')
+    if (images) {
+      gsap.set(images, { yPercent: -50, xPercent: -50, autoAlpha: 0 })
     }
 
-    setupHero()
+    hoverCleanups = []
+    const containers = gsap.utils.toArray<HTMLElement>('.cursor-container', root.value)
 
-    const enableHover = () => {
-      if (!root.value || hoverEnabled) return
-      hoverEnabled = true
+    containers.forEach((el) => {
+      const image = el.querySelector<HTMLImageElement>('img.swipeimage')
+      if (!image) return
 
-      const images = root.value?.querySelectorAll('img.swipeimage')
-      if (images) {
-        gsap.set(images, { yPercent: -50, xPercent: -50, autoAlpha: 0 })
+      const setX = gsap.quickTo(image, 'x', { duration: 0.4, ease: 'power3' })
+      const setY = gsap.quickTo(image, 'y', { duration: 0.4, ease: 'power3' })
+      let firstEnter = true
+
+      const align = (e: MouseEvent) => {
+        if (firstEnter) {
+          setX(e.clientX, e.clientX)
+          setY(e.clientY, e.clientY)
+          firstEnter = false
+        } else {
+          setX(e.clientX)
+          setY(e.clientY)
+        }
       }
 
-      hoverCleanups = []
-      const containers = gsap.utils.toArray<HTMLElement>('.cursor-container', root.value)
+      const startFollow = () => document.addEventListener('mousemove', align)
+      const stopFollow = () => document.removeEventListener('mousemove', align)
 
-      containers.forEach((el) => {
-        const image = el.querySelector<HTMLImageElement>('img.swipeimage')
-        if (!image) return
-
-        const setX = gsap.quickTo(image, 'x', { duration: 0.4, ease: 'power3' })
-        const setY = gsap.quickTo(image, 'y', { duration: 0.4, ease: 'power3' })
-        let firstEnter = true
-
-        const align = (e: MouseEvent) => {
-          if (firstEnter) {
-            setX(e.clientX, e.clientX)
-            setY(e.clientY, e.clientY)
-            firstEnter = false
-          } else {
-            setX(e.clientX)
-            setY(e.clientY)
-          }
-        }
-
-        const startFollow = () => document.addEventListener('mousemove', align)
-        const stopFollow = () => document.removeEventListener('mousemove', align)
-
-        const fade = gsap.to(image, {
-          autoAlpha: 1,
-          ease: 'none',
-          paused: true,
-          duration: 0.1,
-          onReverseComplete: stopFollow,
-        })
-
-        const onEnter = (e: MouseEvent) => {
-          firstEnter = true
-          fade.play()
-          startFollow()
-          align(e)
-        }
-
-        const onLeave = () => fade.reverse()
-
-        el.addEventListener('mouseenter', onEnter)
-        el.addEventListener('mouseleave', onLeave)
-
-        hoverCleanups.push(() => {
-          el.removeEventListener('mouseenter', onEnter)
-          el.removeEventListener('mouseleave', onLeave)
-          stopFollow()
-          gsap.set(image, { autoAlpha: 0 })
-        })
+      const fade = gsap.to(image, {
+        autoAlpha: 1,
+        ease: 'none',
+        paused: true,
+        duration: 0.1,
+        onReverseComplete: stopFollow,
       })
-    }
 
-    const disableHover = () => {
-      if (!hoverEnabled) return
-      hoverEnabled = false
-      hoverCleanups.forEach((cleanup) => cleanup())
-      hoverCleanups = []
-    }
-
-    updateHover = () => {
-      if (!mediaQuery) return
-      if (mediaQuery.matches) {
-        enableHover()
-      } else {
-        disableHover()
+      const onEnter = (e: MouseEvent) => {
+        firstEnter = true
+        fade.play()
+        startFollow()
+        align(e)
       }
+
+      const onLeave = () => fade.reverse()
+
+      el.addEventListener('mouseenter', onEnter)
+      el.addEventListener('mouseleave', onLeave)
+
+      hoverCleanups.push(() => {
+        el.removeEventListener('mouseenter', onEnter)
+        el.removeEventListener('mouseleave', onLeave)
+        stopFollow()
+        gsap.set(image, { autoAlpha: 0 })
+      })
+    })
+  }
+
+  const disableHover = () => {
+    if (!hoverEnabled) return
+    hoverEnabled = false
+    hoverCleanups.forEach((cleanup) => cleanup())
+    hoverCleanups = []
+  }
+
+  updateHover = () => {
+    if (!mediaQuery) return
+    if (mediaQuery.matches) {
+      enableHover()
+    } else {
+      disableHover()
     }
+  }
 
-    mediaQuery = window.matchMedia('(min-width: 1200px)')
-    updateHover()
-    mediaQuery.addEventListener('change', updateHover)
+  mediaQuery = window.matchMedia('(min-width: 1200px)')
+  updateHover()
+  mediaQuery.addEventListener('change', updateHover)
 
-    const setupPanels = () => {
-      panelCleanups.forEach((cleanup) => cleanup())
-      panelCleanups = []
-
+  const setupPanels = () => {
+    if (!root.value) return
+    panelCtx?.revert()
+    panelCtx = gsap.context(() => {
       const panels = gsap.utils.toArray<HTMLElement>('.video-panel', root.value)
       panels.forEach((panel) => {
         const innerpanel = panel.querySelector<HTMLElement>('.section-inner')
@@ -171,32 +171,23 @@ onMounted(() => {
           { scale: 1, opacity: 1 },
           { scale: 0.7, opacity: 0.5, duration: 0.9 },
         ).to(panel, { opacity: 0, duration: 0.1 })
-
-        panelCleanups.push(() => {
-          tl.scrollTrigger?.kill()
-          tl.kill()
-          gsap.set(panel, { clearProps: 'marginBottom,transform,opacity' })
-          gsap.set(innerpanel, { clearProps: 'transform' })
-        })
       })
-    }
+    }, root.value)
+  }
 
+  setupPanels()
+  resizeHandler = () => {
+    setupHero()
     setupPanels()
-    resizeHandler = () => {
-      setupHero()
-      setupPanels()
-      ScrollTrigger.refresh()
-    }
-    window.addEventListener('resize', resizeHandler)
-  }, root.value)
+    ScrollTrigger.refresh()
+  }
+  window.addEventListener('resize', resizeHandler)
 })
 
 onBeforeUnmount(() => {
   if (resizeHandler) {
     window.removeEventListener('resize', resizeHandler)
   }
-  panelCleanups.forEach((cleanup) => cleanup())
-  panelCleanups = []
   if (mediaQuery && updateHover) {
     mediaQuery.removeEventListener('change', updateHover)
   }
@@ -205,9 +196,8 @@ onBeforeUnmount(() => {
     hoverCleanups = []
     hoverEnabled = false
   }
-  heroTween?.scrollTrigger?.kill()
-  heroTween?.kill()
-  ctx?.revert()
+  heroCtx?.revert()
+  panelCtx?.revert()
 })
 </script>
 <template>
