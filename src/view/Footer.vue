@@ -1,4 +1,4 @@
 <script setup lang="ts"></script>
 <template>
-  <div>footer</div>
+  <div class="text-white">footererer</div>
 </template>

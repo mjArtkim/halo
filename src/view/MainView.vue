@@ -3,8 +3,8 @@ import { onBeforeUnmount, onMounted, ref } from 'vue'
 import gsap from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import IntroView from '@/view/IntroView.vue'
-
 import TourPage from '@/view/TourPage.vue'
+import Footer from '@/view/Footer.vue'
 
 gsap.registerPlugin(ScrollTrigger)
 
@@ -323,6 +323,9 @@ onBeforeUnmount(() => {
         <h2 class="text-4xl py-10 font-bold text-white pc:text-6xl">HALŌ TOUR</h2>
       </div>
       <TourPage></TourPage>
+    </section>
+    <section class="h-screen flex flex-col justify-center">
+      <Footer></Footer>
     </section>
   </section>
 </template>
