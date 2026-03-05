@@ -3,7 +3,7 @@ import { onBeforeUnmount, onMounted, ref } from 'vue'
 import gsap from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import IntroView from '@/view/IntroView.vue'
-import TeamVideo from '@/view/TeamVideo.vue'
+
 import TourPage from '@/view/TourPage.vue'
 
 gsap.registerPlugin(ScrollTrigger)
@@ -12,17 +12,25 @@ const root = ref<HTMLElement | null>(null)
 const heroSection = ref<HTMLElement | null>(null)
 const heroImage = ref<HTMLDivElement | null>(null)
 let ctx: gsap.Context | null = null
-let heroCtx: gsap.Context | null = null
-let panelCtx: gsap.Context | null = null
 let mediaQuery: MediaQueryList | null = null
 let hoverCleanups: Array<() => void> = []
 let panelCleanups: Array<() => void> = []
 let hoverEnabled = false
 let updateHover: (() => void) | null = null
 let resizeHandler: (() => void) | null = null
+let resizeRaf = 0
+let lastWidth = 0
+let lastHeight = 0
 
 onMounted(() => {
   if (!root.value || !heroImage.value || !heroSection.value) return
+
+  ScrollTrigger.config({
+    autoRefreshEvents: 'visibilitychange,DOMContentLoaded,load',
+  })
+
+  lastWidth = window.innerWidth
+  lastHeight = window.innerHeight
 
   ctx = gsap.context(() => {
     gsap.set(heroImage.value, { y: 0, opacity: 1 })
@@ -146,7 +154,8 @@ onMounted(() => {
           scrollTrigger: {
             trigger: panel,
             start: 'bottom bottom',
-            end: () => (fakeScrollRatio ? `+=${innerpanel.offsetHeight}` : 'bottom top'),
+            end: () =>
+              fakeScrollRatio ? `+=${innerpanel.offsetHeight}` : `+=${window.innerHeight}`,
             pinSpacing: false,
             pin: true,
             scrub: true,
@@ -178,15 +187,33 @@ onMounted(() => {
     }
 
     setupPanels()
+    const shouldRebuild = () => {
+      const width = window.innerWidth
+      const height = window.innerHeight
+      const widthChanged = width !== lastWidth
+      const heightChanged = Math.abs(height - lastHeight) > 80
+      if (widthChanged || heightChanged) {
+        lastWidth = width
+        lastHeight = height
+        return true
+      }
+      return false
+    }
+
     resizeHandler = () => {
-      setupPanels()
-      ScrollTrigger.refresh()
+      cancelAnimationFrame(resizeRaf)
+      resizeRaf = requestAnimationFrame(() => {
+        if (!shouldRebuild()) return
+        setupPanels()
+        ScrollTrigger.refresh()
+      })
     }
     window.addEventListener('resize', resizeHandler)
   }, root.value)
 })
 
 onBeforeUnmount(() => {
+  cancelAnimationFrame(resizeRaf)
   if (resizeHandler) {
     window.removeEventListener('resize', resizeHandler)
   }
@@ -287,9 +314,7 @@ onBeforeUnmount(() => {
     <section
       class="video-panel relative w-full min-h-[870px] h-screen my-[80px] px-10 flex flex-col justify-center items-center"
     >
-      <div class="section-inner w-full flex flex-col items-center">
-        <TeamVideo class="grid"></TeamVideo>
-      </div>
+      <div class="section-inner w-full flex flex-col items-center text-white">COMMING SOON</div>
     </section>
     <section
       class="video-panel relative w-full min-h-[880px] h-full my-[30px] px-10 flex flex-col justify-center items-center bgim2 pc:py-20"

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue'
+import { computed, onBeforeUnmount, ref } from 'vue'
 import { collection, onSnapshot } from 'firebase/firestore'
 import { db } from '@/firebase'
 
@@ -135,16 +135,10 @@ const closeModal = () => {
   activeTour.value = null
 }
 
-const openList = () => {
-  isListOpen.value = true
-}
-
-const closeList = () => {
-  isListOpen.value = false
-  activeTour.value = null
-}
-
-onMounted(() => {
+const startListening = () => {
+  if (unsubscribe) return
+  loading.value = true
+  errorMessage.value = ''
   const colRef = collection(db, 'tours')
   unsubscribe = onSnapshot(
     colRef,
@@ -176,12 +170,27 @@ onMounted(() => {
       loading.value = false
     },
   )
-})
+}
+
+const stopListening = () => {
+  if (!unsubscribe) return
+  unsubscribe()
+  unsubscribe = null
+}
+
+const openList = () => {
+  isListOpen.value = true
+  startListening()
+}
+
+const closeList = () => {
+  isListOpen.value = false
+  activeTour.value = null
+  stopListening()
+}
 
 onBeforeUnmount(() => {
-  if (unsubscribe) {
-    unsubscribe()
-  }
+  stopListening()
 })
 </script>
 
