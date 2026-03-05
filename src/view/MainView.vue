@@ -24,37 +24,19 @@ onMounted(() => {
   if (!root.value || !heroImage.value || !heroSection.value) return
 
   ctx = gsap.context(() => {
-    ScrollTrigger.config({ ignoreMobileResize: true, limitCallbacks: true })
-
-    const getMotionSettings = () => {
-      const isMobile = window.innerWidth < 768
-      return {
-        isMobile,
-        heroY: isMobile ? -160 : -220,
-        heroScrub: isMobile ? 0.6 : 0.3,
-        panelScale: isMobile ? 0.85 : 0.7,
-        panelOpacity: isMobile ? 0.7 : 0.5,
-        panelScrub: isMobile ? 0.7 : 0.3,
-        fadeDuration: isMobile ? 0.2 : 0.1,
-        pinAnticipate: isMobile ? 1 : 0,
-      }
-    }
-
     const setupHero = () => {
-      const motion = getMotionSettings()
       heroTween?.scrollTrigger?.kill()
       heroTween?.kill()
       gsap.set(heroImage.value, { y: 0, opacity: 1 })
       heroTween = gsap.to(heroImage.value, {
-        y: motion.heroY,
+        y: -220,
         opacity: 0,
         ease: 'none',
         scrollTrigger: {
           trigger: heroSection.value,
           start: 'top top',
           end: 'bottom top',
-          scrub: motion.heroScrub,
-          invalidateOnRefresh: true,
+          scrub: true,
         },
       })
     }
@@ -150,7 +132,6 @@ onMounted(() => {
 
       const panels = gsap.utils.toArray<HTMLElement>('.video-panel', root.value)
       panels.forEach((panel) => {
-        const motion = getMotionSettings()
         const innerpanel = panel.querySelector<HTMLElement>('.section-inner')
         if (!innerpanel) return
 
@@ -172,9 +153,7 @@ onMounted(() => {
             end: () => (fakeScrollRatio ? `+=${innerpanel.offsetHeight}` : 'bottom top'),
             pinSpacing: false,
             pin: true,
-            scrub: motion.panelScrub,
-            anticipatePin: motion.pinAnticipate,
-            invalidateOnRefresh: true,
+            scrub: true,
           },
         })
 
@@ -190,8 +169,8 @@ onMounted(() => {
         tl.fromTo(
           panel,
           { scale: 1, opacity: 1 },
-          { scale: motion.panelScale, opacity: motion.panelOpacity, duration: 0.9 },
-        ).to(panel, { opacity: 0, duration: motion.fadeDuration })
+          { scale: 0.7, opacity: 0.5, duration: 0.9 },
+        ).to(panel, { opacity: 0, duration: 0.1 })
 
         panelCleanups.push(() => {
           tl.scrollTrigger?.kill()
@@ -203,16 +182,7 @@ onMounted(() => {
     }
 
     setupPanels()
-    let lastWidth = window.innerWidth
-    let lastHeight = window.innerHeight
     resizeHandler = () => {
-      const width = window.innerWidth
-      const height = window.innerHeight
-      const widthChanged = Math.abs(width - lastWidth) > 0
-      const heightChanged = Math.abs(height - lastHeight) > 120
-      if (!widthChanged && !heightChanged) return
-      lastWidth = width
-      lastHeight = height
       setupHero()
       setupPanels()
       ScrollTrigger.refresh()
