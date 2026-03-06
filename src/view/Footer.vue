@@ -18,7 +18,7 @@
         ><img
           src="@/assets/img/dblogo.webp"
           alt="dubvision Logo"
-          class="h-10 w-auto opacity-80 transition duration-300 group-hover:opacity-100 group-hover:scale-105"
+          class="h-10 w-auto opacity-80 transition duration-300 group-hover:opacity-100 group-hover:scale-105 pc:h-20"
       /></a>
       <a
         href="https://www.instagram.com/thirdpartylive/"
