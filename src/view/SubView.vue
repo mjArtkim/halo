@@ -79,7 +79,7 @@ onMounted(() => {
         panel,
         {
           opacity: 0,
-          duration: 0.1,
+          duration: 0.2,
         },
       )
     })
