@@ -33,7 +33,7 @@
     <div class="text-white text-center py-10">
       &copy; 2026 DubVision, Third Party, and Matisse & Sadko. All rights reserved.
     </div>
-    <div class="text-white">
+    <div class="text-white text-center">
       Design & Development by<a href="https://www.ideartm.com" alt="minji kim portfoilo"
         >MINJI KIM</a
       >
