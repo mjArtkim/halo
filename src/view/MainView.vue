@@ -163,7 +163,7 @@ onBeforeUnmount(() => {
           <img
             src="@/assets/img/mains.png"
             alt="Main Image"
-            class="w-full h-full object-contain hidden pc:block"
+            class="w-full h-full object-cover hidden pc:block"
           />
           <div class="absolute inset-0 bg-gradient-to-t from-transparent to-black"></div>
         </div>
