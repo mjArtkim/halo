@@ -221,6 +221,11 @@ onBeforeUnmount(() => {
       <TourPage></TourPage>
     </section>
     <section>
+      <div class="h-[500px] text-4xl text-white flex flex-col justify-center items-center">
+        ANOTHER
+      </div>
+    </section>
+    <section>
       <SubView></SubView>
     </section>
     <section class="h-screen flex flex-col justify-center">

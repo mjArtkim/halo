@@ -237,7 +237,7 @@ watch(
     <div class="mx-auto w-full flex justify-center">
       <button
         type="button"
-        class="rounded-md border border-white/30 bg-black/80 px-6 py-3 text-base transition hover:bg-white hover:text-black"
+        class="rounded-md border border-white/30 bg-black/80 px-6 py-3 text-base cursor-pointer transition hover:bg-white hover:text-black"
         @click="openList"
       >
         Show Tours
@@ -260,7 +260,7 @@ watch(
           </div>
           <button
             type="button"
-            class="rounded-md border border-white/30 px-3 py-1 text-sm transition hover:bg-white hover:text-black"
+            class="rounded-md border border-white/30 px-3 py-1 text-sm transition cursor-pointer hover:bg-white hover:text-black"
             @click="closeList"
           >
             Close
@@ -273,7 +273,7 @@ watch(
           >
             <button
               type="button"
-              class="rounded-md px-4 py-1.5 transition"
+              class="rounded-md px-4 py-1.5 transition cursor-pointer"
               :class="viewMode === 'upcoming' ? 'bg-white text-black' : 'text-white/70'"
               @click="viewMode = 'upcoming'"
             >
@@ -281,7 +281,7 @@ watch(
             </button>
             <button
               type="button"
-              class="rounded-md px-4 py-1.5 transition"
+              class="rounded-md px-4 py-1.5 transition cursor-pointer"
               :class="viewMode === 'past' ? 'bg-white text-black' : 'text-white/70'"
               @click="viewMode = 'past'"
             >
@@ -324,7 +324,7 @@ watch(
                 </div>
                 <button
                   type="button"
-                  class="rounded-md border border-white/30 px-4 py-2 text-sm transition hover:bg-white hover:text-black"
+                  class="rounded-md border border-white/30 px-4 py-2 text-sm transition cursor-pointer hover:bg-white hover:text-black"
                   @click="openModal(tour)"
                 >
                   Show
@@ -354,7 +354,7 @@ watch(
           </div>
           <button
             type="button"
-            class="rounded-md border border-white/30 px-3 py-1 text-sm transition hover:bg-white hover:text-black"
+            class="rounded-md border border-white/30 px-3 py-1 text-sm transition cursor-pointer hover:bg-white hover:text-black"
             @click="closeModal"
           >
             Close
