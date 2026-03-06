@@ -93,7 +93,7 @@ onBeforeUnmount(() => {
         </div>
       </div>
     </div>
-    <div class="section px-10 py-10 text-white flex flex-col justify-center">
+    <div class="section h-full px-10 py-10 text-white flex flex-col justify-center">
       <h1 class="py-4">HALŌ</h1>
       <div class="py-4">
         Formed by DubVision, Matisse & Sadko, and Third Party, HALŌ is a powerhouse collaboration

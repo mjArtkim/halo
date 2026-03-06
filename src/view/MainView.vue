@@ -212,7 +212,9 @@ onBeforeUnmount(() => {
         <IntroView></IntroView>
       </section>
     </section>
-    <SubView></SubView>
+    <section>
+      <SubView></SubView>
+    </section>
     <section
       class="relative w-full min-h-[880px] h-screen px-10 flex flex-col justify-center items-center bgim2 pc:py-20"
     >
