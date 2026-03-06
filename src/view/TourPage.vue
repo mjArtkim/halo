@@ -246,11 +246,11 @@ watch(
 
     <div
       v-if="isListOpen"
-      class="fixed inset-0 z-50 flex items-center justify-center bg-black/70 px-4 py-8"
+      class="fixed inset-0 z-50 flex items-center justify-center bg-black/70 px-3 py-8"
       @click="closeList"
     >
       <div
-        class="w-full max-w-3xl rounded-2xl border border-white/20 bg-black/90 p-6 text-white"
+        class="w-full max-w-3xl rounded-2xl border border-white/20 bg-black/90 px-4 py-5 text-white"
         @click.stop
       >
         <div class="flex items-start justify-between gap-4">
@@ -316,11 +316,11 @@ watch(
             <li
               v-for="tour in filteredTours"
               :key="tour.id"
-              class="rounded-md border border-white/15 bg-white/5 px-6 py-5"
+              class="rounded-md border border-white/15 bg-white/5 px-4 py-5"
             >
               <div class="flex gap-4 sm:flex-row items-center justify-between">
                 <div class="space-y-1">
-                  <div class="text-lg font-semibold">{{ tour.title }}</div>
+                  <div class="text-base font-semibold">{{ tour.title }}</div>
                 </div>
                 <button
                   type="button"
@@ -347,7 +347,7 @@ watch(
       >
         <div class="flex items-start justify-between gap-4">
           <div>
-            <h3 class="text-2xl font-bold">{{ activeTour.title }}</h3>
+            <h3 class="text-xl font-bold">{{ activeTour.title }}</h3>
             <p v-if="activeTour.setLabel" class="mt-1 text-sm text-white/70">
               {{ activeTour.setLabel }}
             </p>
