@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, onBeforeUnmount, ref } from 'vue'
+import { computed, onBeforeUnmount, ref, watch } from 'vue'
 import { collection, onSnapshot } from 'firebase/firestore'
 import { db } from '@/firebase'
 
@@ -22,6 +22,31 @@ const errorMessage = ref('')
 let unsubscribe: (() => void) | null = null
 const activeTour = ref<Tour | null>(null)
 const isListOpen = ref(false)
+const isOverlayOpen = computed(() => isListOpen.value || !!activeTour.value)
+let scrollLocked = false
+let savedBodyOverflow = ''
+let savedBodyPaddingRight = ''
+
+const lockScroll = () => {
+  if (scrollLocked || typeof window === 'undefined' || typeof document === 'undefined') return
+  const body = document.body
+  savedBodyOverflow = body.style.overflow
+  savedBodyPaddingRight = body.style.paddingRight
+  const scrollbarWidth = window.innerWidth - document.documentElement.clientWidth
+  if (scrollbarWidth > 0) {
+    body.style.paddingRight = `${scrollbarWidth}px`
+  }
+  body.style.overflow = 'hidden'
+  scrollLocked = true
+}
+
+const unlockScroll = () => {
+  if (!scrollLocked || typeof document === 'undefined') return
+  const body = document.body
+  body.style.overflow = savedBodyOverflow
+  body.style.paddingRight = savedBodyPaddingRight
+  scrollLocked = false
+}
 
 type ViewMode = 'upcoming' | 'past'
 const viewMode = ref<ViewMode>('upcoming')
@@ -191,7 +216,20 @@ const closeList = () => {
 
 onBeforeUnmount(() => {
   stopListening()
+  unlockScroll()
 })
+
+watch(
+  isOverlayOpen,
+  (open) => {
+    if (open) {
+      lockScroll()
+    } else {
+      unlockScroll()
+    }
+  },
+  { immediate: true },
+)
 </script>
 
 <template>
