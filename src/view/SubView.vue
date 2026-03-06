@@ -129,9 +129,7 @@ onBeforeUnmount(() => {
                 allowfullscreen
                 loading="lazy"
               ></iframe>
-              <div
-                class="pointer-events-none absolute inset-0 flex items-end bg-gradient-to-t from-black via-black/30 to-transparent"
-              >
+              <div class="pointer-events-none absolute inset-0 flex items-end">
                 <div class="p-4 text-white">
                   <div class="text-lg font-semibold leading-tight">{{ video.title }}</div>
                   <div class="text-sm opacity-80">{{ video.artist }}</div>
