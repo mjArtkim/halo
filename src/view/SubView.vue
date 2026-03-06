@@ -68,9 +68,9 @@ onMounted(() => {
 
       if (fakeScrollRatio) {
         tl.to(innerpanel, {
-          yPercent: -100,
+          yPercent: -200,
           y: window.innerHeight,
-          duration: 1 / (1 - fakeScrollRatio) - 1,
+          duration: 2 / (2 - fakeScrollRatio) - 2,
           ease: 'none',
         })
       }
