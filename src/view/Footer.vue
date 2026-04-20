@@ -31,7 +31,8 @@
       /></a>
     </div>
     <div class="text-white text-center py-10">
-      &copy; 2026 DubVision, Third Party, and Matisse & Sadko. All rights reserved.
+      &copy; 2026 Fan-made website dedicated to DubVision, Third Party, and Matisse & Sadko. All
+      rights reserved to the respective owners.
     </div>
     <div class="text-white text-center">
       Design & Development by<a href="https://www.ideartm.com" alt="minji kim portfoilo"
