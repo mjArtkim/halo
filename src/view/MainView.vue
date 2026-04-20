@@ -145,6 +145,11 @@ onBeforeUnmount(() => {
         ref="heroSection"
         class="h-screen relative flex flex-col items-center overflow-hidden"
       >
+        <div
+          class="absolute top-6 right-6 z-10 rounded-full border border-white/20 bg-black/45 px-4 py-2 text-[11px] tracking-[0.24em] text-white/75 uppercase backdrop-blur-sm"
+        >
+          Unofficial Fanmade Site
+        </div>
         <div class="w-full z-1 gap-30 pt-30 px-8 pc:flex pc:flex-col pc:items-center pc:pt-20">
           <div class="py-30 pc:py-4">
             <img src="@/assets/img/logo.png" alt="Logo" class="pc:h-[150px]" />
