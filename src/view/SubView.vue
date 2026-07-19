@@ -1,11 +1,4 @@
 <script setup lang="ts">
-import { onBeforeUnmount, onMounted, ref } from 'vue'
-import gsap from 'gsap'
-import { ScrollTrigger } from 'gsap/ScrollTrigger'
-
-gsap.registerPlugin(ScrollTrigger)
-
-const root = ref<HTMLElement | null>(null)
 type VideoItem = {
   id: string
   title: string
@@ -13,6 +6,7 @@ type VideoItem = {
 }
 
 const videos: VideoItem[] = [
+  { id: 'NKU5WW3vyJc?si=O0yYRCxavPe8rAMY', title: ' ULTRA EUROPE 2026', artist: 'HALŌ' },
   { id: 'lPLHOPVSw_Q', title: 'Tomorrowland Brasil 2025', artist: 'HALŌ' },
   { id: 'aWOm_wGei7Q', title: 'Tomorrowland 2025', artist: 'Dubvision B2B Third Party' },
   {
@@ -27,85 +21,21 @@ const videos: VideoItem[] = [
     artist: 'DUBVISION B2B MATISSE & SADKO',
   },
 ]
-let ctx: gsap.Context | null = null
-let marginCleanups: Array<() => void> = []
-
-onMounted(() => {
-  if (!root.value) return
-
-  ctx = gsap.context(() => {
-    const panels = gsap.utils.toArray<HTMLElement>('.section', root.value)
-    if (panels.length === 0) return
-    panels.pop()
-
-    panels.forEach((panel) => {
-      const innerpanel = panel.querySelector<HTMLElement>('.section-inner')
-      if (!innerpanel) return
-
-      const panelHeight = innerpanel.offsetHeight
-      const windowHeight = window.innerHeight
-      const difference = panelHeight - windowHeight
-      const fakeScrollRatio = difference > 0 ? difference / (difference + windowHeight) : 0
-
-      if (fakeScrollRatio) {
-        const previousMargin = panel.style.marginBottom
-        panel.style.marginBottom = `${panelHeight * fakeScrollRatio}px`
-        marginCleanups.push(() => {
-          panel.style.marginBottom = previousMargin
-        })
-      }
-
-      const tl = gsap.timeline({
-        scrollTrigger: {
-          trigger: panel,
-          start: 'bottom bottom',
-          end: () => (fakeScrollRatio ? `+=${innerpanel.offsetHeight}` : 'bottom top'),
-          pinSpacing: false,
-          pin: true,
-          scrub: true,
-        },
-      })
-
-      if (fakeScrollRatio) {
-        tl.to(innerpanel, {
-          yPercent: -200,
-          y: window.innerHeight,
-          duration: 2 / (2 - fakeScrollRatio) - 2,
-          ease: 'none',
-        })
-      }
-
-      tl.fromTo(panel, { scale: 1, opacity: 1 }, { scale: 0.7, opacity: 0.5, duration: 0.9 }).to(
-        panel,
-        {
-          opacity: 0,
-          duration: 0.2,
-        },
-      )
-    })
-  }, root.value)
-})
-
-onBeforeUnmount(() => {
-  marginCleanups.forEach((cleanup) => cleanup())
-  marginCleanups = []
-  ctx?.revert()
-})
 </script>
 
 <template>
-  <section ref="root">
+  <section class="video-section">
     <section
-      class="section relative w-full h-screen my-[80px] px-10 flex flex-col justify-center items-center bgim"
+      class="video-hero relative flex w-full flex-col items-center justify-center bgim px-5 pc:px-10"
     >
-      <div class="section-inner w-full flex flex-col items-center justify-center">
+      <div class="w-full flex flex-col items-center justify-center">
         <h2 class="text-4xl py-10 font-bold text-white pc:text-6xl">HALŌ VIDEO</h2>
       </div>
     </section>
     <section
-      class="section relative w-full h-screen my-[80px] px-10 flex flex-col justify-center items-center"
+      class="relative flex w-full flex-col items-center px-5 py-16 pc:px-10 pc:py-24"
     >
-      <div class="section-inner w-full flex flex-col items-center text-white">
+      <div class="w-full flex flex-col items-center text-white">
         <div class="w-full max-w-6xl grid grid-cols-1 pc:grid-cols-2 gap-6">
           <div
             v-for="video in videos"
@@ -144,10 +74,25 @@ onBeforeUnmount(() => {
 </template>
 
 <style>
+.video-section {
+  overflow: clip;
+}
+
+.video-hero {
+  min-height: 100vh;
+  min-height: 100svh;
+}
+
 .bgim {
   background-image: url('@/src/assets/img/09.webp');
   background-size: cover;
   background-position: center;
+}
+
+@supports not (overflow: clip) {
+  .video-section {
+    overflow: hidden;
+  }
 }
 .bgim2 {
   background-image: url('@/src/assets/img/11.webp');
