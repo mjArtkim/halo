@@ -6,7 +6,7 @@ type VideoItem = {
 }
 
 const videos: VideoItem[] = [
-  { id: 'NKU5WW3vyJc?si=O0yYRCxavPe8rAMY', title: ' ULTRA EUROPE 2026', artist: 'HALŌ' },
+  { id: '4uHPAUR9bfk?si=fL8_W5ffnpYU9iCC', title: 'Tomorrowland 2026', artist: 'HALŌ' },
   {
     id: 'RRqBlBRrVi4?si=c5GuxS4Wlj_46JmU',
     title: 'SSK AFTER PARTY 2026',
