@@ -7,6 +7,16 @@ type VideoItem = {
 
 const videos: VideoItem[] = [
   { id: 'NKU5WW3vyJc?si=O0yYRCxavPe8rAMY', title: ' ULTRA EUROPE 2026', artist: 'HALŌ' },
+  {
+    id: 'RRqBlBRrVi4?si=c5GuxS4Wlj_46JmU',
+    title: 'SSK AFTER PARTY 2026',
+    artist: 'THIRDPARTY B2B DUBVISION',
+  },
+  {
+    id: 'Hwdz8PNVj04?si=W-cdNtZHCJ4NS48w',
+    title: 'Tomorrowland Winter 2026',
+    artist: 'Matisse & Sadko B2B Third Party ',
+  },
   { id: 'lPLHOPVSw_Q', title: 'Tomorrowland Brasil 2025', artist: 'HALŌ' },
   { id: 'aWOm_wGei7Q', title: 'Tomorrowland 2025', artist: 'Dubvision B2B Third Party' },
   {
@@ -32,9 +42,7 @@ const videos: VideoItem[] = [
         <h2 class="text-4xl py-10 font-bold text-white pc:text-6xl">HALŌ VIDEO</h2>
       </div>
     </section>
-    <section
-      class="relative flex w-full flex-col items-center px-5 py-16 pc:px-10 pc:py-24"
-    >
+    <section class="relative flex w-full flex-col items-center px-5 py-16 pc:px-10 pc:py-24">
       <div class="w-full flex flex-col items-center text-white">
         <div class="w-full max-w-6xl grid grid-cols-1 pc:grid-cols-2 gap-6">
           <div
